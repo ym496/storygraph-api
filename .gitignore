@@ -1,0 +1,14 @@
+# venv and env
+.story/
+.env
+# python generated files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# build and pckg distribution
+build/
+dist/
+*.egg-info/
+.eggs/
