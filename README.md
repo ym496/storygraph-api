@@ -24,7 +24,7 @@ The API is divided into two components, `Books Client` and   `User Client`.
 # Books Client
 # Fetch details of a book using its ID
 
-from storygraph_api.books_client import Book
+from storygraph_api import Book
 id = "fbdd6b7c-f512-47f2-aa94-d8bf0d5f5175"
 book = Book()
 result = book.book_info(id)
@@ -55,14 +55,14 @@ print(result)
 ```
 
 
-### Currently reading list:
+### User List:
 
 ```python
 # User Client
 # works only for public profiles
-# fetch any user's currently reading list
+# fetch user's currently reading list
 
-from storygraph_api.users_client import User
+from storygraph_api import User
 from dotenv import load_dotenv
 load_dotenv()
 cookie = os.getenv('COOKIE') # retrieve cookie from .env file
