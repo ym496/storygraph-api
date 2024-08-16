@@ -1,5 +1,5 @@
 # Storygraph API
-A package to interact with and fetch data from the [StoryGraph](https://app.thestorygraph.com/) website.
+A python package to interact with and fetch data from the [StoryGraph](https://app.thestorygraph.com/) website.
 
 ## Features
 - **Book Details**: Fetch detailed information about a book using its unique ID.
@@ -96,7 +96,7 @@ print(result)
 ## Contributing
 Contributions are welcome! Fork the repository, make your changes, and submit a pull request.
 
-For bugs or feature requests, please open an issue on [GitHub](https://github.com/ym496/storygraph-api).
+For bugs or feature requests, please open an issue on [GitHub](https://github.com/ym496/storygraph-api/issues).
 
 ## License
 

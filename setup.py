@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="storygraph-api",
-    version="0.1.5",
+    version="0.1.0",
     description="This package allows you to interact and fetch data from the StoryGraph website.",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -20,5 +20,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    keywords=["storygraph", "storygraph api", "api storygraph", "storygraph scraper"],
     python_requires='>=3.10',
 )
