@@ -13,3 +13,7 @@ build/
 dist/
 *.egg-info/
 .eggs/
+
+**/.env
+repomix-output.xml
+**/repomix-output.xml

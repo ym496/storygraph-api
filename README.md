@@ -1,116 +1,121 @@
-# Storygraph API
-A python package to interact with and fetch data from the [StoryGraph](https://app.thestorygraph.com/) website.
+# Unofficial StoryGraph API for Python
 
-## Features
-- **Book Details**: Fetch detailed information about a book using its unique ID.
-- **Search**: Perform a book search on StoryGraph and retrieve the results.
-- **Fetch User lists**: 
-    -  currently reading
-    -  planning to read
-    -  books read
+An unofficial Python wrapper for The StoryGraph API, forked from [ym496/storygraph-api](https://github.com/ym496/storygraph-api).
+
+This fork has been significantly refactored and enhanced to be more efficient, reliable, and feature-rich.
+
+## Key Enhancements in This Fork
+
+* **No More Selenium**: The original dependency on Selenium and a headless browser has been completely removed. This version uses the `requests` library directly for all API communication, resulting in a much lighter, faster, and more stable experience.
+* **Expanded API Coverage**: Many new features have been added, including methods to:
+  * Fetch your reading progress.
+  * Get your read dates for a book.
+  * Retrieve all your journal entries or entries for a specific book.
+  * Get a book's AI-generated summary.
+  * Fetch a user's ID.
+* **Modernized Codebase**: The code has been updated with type hints and a more robust project structure.
+* **Cookie-Based Authentication**: Authentication is now handled by passing your browser's session cookies, which is a more reliable method than the previous implementation.
 
 ## Installation
+
+```bash
+pip install -r requirements.txt
 ```
-pip install storygraph-api
-```
 
-## Getting Started
+## Configuration
 
-The API is divided into two components, `Books Client` and   `User Client`.
+This wrapper requires authentication for most features. You'll need to provide your StoryGraph session cookies and username.
 
-### Book Details:
+1. **Create a `.env` file** in the root of the project.
+2. **Find your cookies**:
+   * Open your web browser and log in to [The StoryGraph](https://app.thestorygraph.com/).
+   * Open your browser's developer tools (usually by pressing F12).
+   * Go to the "Application" (in Chrome) or "Storage" (in Firefox) tab.
+   * Under the "Cookies" section for `app.thestorygraph.com`, find the values for `_storygraph_session` and `remember_user_token`.
+3. **Add your credentials to the `.env` file**:
+
+   ```dotenv
+   _STORYGRAPH_SESSION=your_session_cookie_value
+   REMEMBER_USER_TOKEN=your_remember_token_value
+   STORYGRAPH_USERNAME=your_storygraph_username
+   ```
+
+## Usage
+
+Here's a basic example of how to use the `Book` and `User` clients.
 
 ```python
-# Books Client
-# Fetch details of a book using its ID
-
-from storygraph_api import Book
-id = "fbdd6b7c-f512-47f2-aa94-d8bf0d5f5175"
-book = Book()
-result = book.book_info(id)
-print(result)
-```
-#### Result:
-```json
-{
-  "title": "Hagakure: The Book of the Samurai",
-  "authors": [
-    "Yamamoto Tsunetomo",
-    "William Scott Wilson"
-  ],
-  "pages": "179",
-  "first_pub": "1716",
-  "tags": [
-    "nonfiction",
-    "history",
-    "philosophy",
-    "informative",
-    "reflective",
-    "slow-paced"
-  ],
-  "average_rating": "3.65",
-  "description": "<div><em>Hagakure<\\/em> (\\\"In the Shadow of Leaves\\\") is a manual for the samurai classes consisting of a series of short anecdotes and reflections that give both insight and instruction-in the philosophy and code of behavior that foster the true spirit of Bushido-the Way of the Warrior. It is not a book of philosophy as most would understand the word: it is a collection of thoughts and sayings recorded over a period of seven years, and as such covers a wide variety of subjects, often in no particular sequence. <br><br>The work represents an attitude far removed from our modern pragmatism and materialism, and possesses an intuitive rather than rational appeal in its assertion that Bushido is a Way of Dying, and that only a samurai retainer prepared and willing to die at any moment can be totally true to his lord. While <em>Hagakure<\\/em> was for many years a secret text known only to the warrior vassals of the Hizen fief to which the author belonged, it later came to be recognized as a classic exposition of samurai thought and came to influence many subsequent generations, including Yukio Mishima. <br><br>This translation offers 300 selections that constitute the core texts of the 1,300 present in the original. <br><em>Hagakure<\\/em> was featured prominently in the film <em>Ghost Dog<\\/em>, by Jim Jarmusch.<\\/div>",
-  "warnings": {
-    "graphic": [
-      "Suicide",
-      "Violence"
-    ],
-    "moderate": [
-      "Suicide",
-      "Suicide attempt",
-      "War"
-    ],
-    "minor": [
-      "Gore"
-    ]
-  }
-}
-```
-
-
-### User List:
-
-```python
-# User Client
-# works only for public profiles
-# fetch user's currently reading list
-
-from storygraph_api import User
+import os
+import json
 from dotenv import load_dotenv
-load_dotenv()
-cookie = os.getenv('COOKIE') # retrieve cookie from .env file
-uname = 'sampleuname' #some username 
-user = User()
-result = user.currently_reading(uname,cookie=cookie)
-print(result)
+from storygraph_api import Book, User
 
+# Load environment variables from .env file
+load_dotenv()
+
+# --- Authentication ---
+username = os.getenv("STORYGRAPH_USERNAME")
+session_cookie = os.getenv("_STORYGRAPH_SESSION")
+remember_token = os.getenv("REMEMBER_USER_TOKEN")
+
+auth_cookies = {
+    "_storygraph_session": session_cookie,
+    "remember_user_token": remember_token
+}
+
+# --- Initialize Clients ---
+book_client = Book()
+user_client = User()
+
+# --- User Client Examples ---
+
+# Get user ID
+user_id_json = user_client.get_user_id(username)
+user_id = json.loads(user_id_json).get("user_id")
+print(f"User ID: {user_id}")
+
+# Get 'Currently Reading' list
+currently_reading = user_client.currently_reading(username, auth_cookies)
+print(currently_reading)
+
+# Get 'To-Read' list
+to_read = user_client.to_read(username, auth_cookies)
+print(to_read)
+
+# Get 'Read' list
+books_read = user_client.books_read(username, auth_cookies)
+print(books_read)
+
+# --- Book Client Examples ---
+
+book_id = "1c023e31-637b-41d9-ba64-260c3c1b0f3d" # Example book ID
+
+# Search for a book
+search_results = book_client.search("Dune Frank Herbert")
+print(search_results)
+
+# Get book info
+book_info = book_client.book_info(book_id)
+print(book_info)
+
+# Get your reading progress for a book
+progress = book_client.reading_progress(book_id, auth_cookies)
+print(progress)
+
+# Get your read dates for a book
+read_dates = book_client.get_read_dates(book_id, auth_cookies)
+print(read_dates)
+
+# Get your journal entries for a book
+journal_entries = book_client.get_journal_entries(book_id, auth_cookies)
+print(journal_entries)
+
+# Get the AI summary for a book
+if user_id:
+    ai_summary = book_client.get_ai_summary(book_id, user_id)
+    print(ai_summary)
 ```
 
-#### Result:
-  
-  ```json
-  [
-    {
-        "title": "The Murder After the Night Before",
-        "book_id": "38cb5b56-23f1-48fd-b4b3-a80e07a19775"
-    },
-    {
-        "title": "The Graces",
-        "book_id": "653b54b3-a79d-4c2e-ae40-eae281a91315"
-    }
-]
+## Disclaimer
 
-  ```
-
-## Further Information 
-*  Refer to [books_client.py](https://github.com/ym496/storygraph-api/tree/main/storygraph_api/books_client.py) and [users_client.py](https://github.com/ym496/storygraph-api/tree/main/storygraph_api/users_client.py) files to know more functionalities.
-*  All the user related tasks require the `remember_user_token` cookie. It can be found in the `Application` section of your browser’s developer tools for the StoryGraph website.
-
-## Contributing
-Contributions are welcome! Fork the repository, make your changes, and submit a pull request.
-
-For bugs or feature requests, please open an issue on [GitHub](https://github.com/ym496/storygraph-api/issues).
-
-## License
-
-This project is licensed under the MIT License.
+This is an unofficial wrapper. It is not affiliated with or endorsed by The StoryGraph. Use it at your own risk. The StoryGraph's website structure could change at any time, which might break this wrapper.
