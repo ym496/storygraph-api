@@ -3,6 +3,20 @@ from storygraph_api.exception_handler import parsing_exception
 from bs4 import BeautifulSoup
 
 class UserParser:
+
+    @staticmethod
+    def _book_covers(soup):
+        book_to_cover = dict()
+        links = soup.find_all('a')
+        for link in links:
+            if not link['href'].startswith('/books/'):
+                continue
+            img = link.find('img')
+            if not img:
+                continue
+            book_to_cover[link['href'].split('/')[-1]] = img['src']
+        return book_to_cover
+
     @staticmethod
     @parsing_exception 
     def parse_html(html, id_enclosure=None):
@@ -11,6 +25,7 @@ class UserParser:
             soup = soup.find_all('div', attrs={"id": id_enclosure})[0]
         books_list = []
         books = soup.find_all('div', class_="book-title-author-and-series")
+        covers = UserParser._book_covers(soup)
         for book in books:
             a_list = book.find_all('a')
             authors = []
@@ -23,7 +38,8 @@ class UserParser:
             books_list.append({
                 'title': title,
                 'book_id': book_id,
-                'authors': authors
+                'authors': authors,
+                'cover': covers[book_id]
                 })
         data = list({(book['title'], book['book_id']): book for book in books_list}.values())
         return data
