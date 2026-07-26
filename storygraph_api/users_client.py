@@ -14,6 +14,11 @@ class User:
         return json.dumps(data,indent=4)
 
     @handle_exceptions
+    def up_next(self, uname, cookie):
+        data = UserParser.up_next(uname,cookie)
+        return json.dumps(data,indent=4)
+
+    @handle_exceptions
     def books_read(self,uname,cookie):
         data = UserParser.books_read(uname,cookie)
         return json.dumps(data,indent=4)

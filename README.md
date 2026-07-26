@@ -92,11 +92,13 @@ print(result)
   [
     {
         "title": "The Murder After the Night Before",
-        "book_id": "38cb5b56-23f1-48fd-b4b3-a80e07a19775"
+        "book_id": "38cb5b56-23f1-48fd-b4b3-a80e07a19775",
+        "authors": ["Katy Brent"]
     },
     {
         "title": "The Graces",
-        "book_id": "653b54b3-a79d-4c2e-ae40-eae281a91315"
+        "book_id": "653b54b3-a79d-4c2e-ae40-eae281a91315",
+        "authors": ["Laure Eve"]
     }
 ]
 
